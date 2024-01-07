@@ -100,8 +100,7 @@ class ModelImplementation_dataset1:
                 'kategori': kategori
             })
 
-        # Mengonversi list menjadi DataFrame
-        # self.min_max_values = pd.DataFrame(min_max_values_list)
+
         return min_max_values_list
 
     def cluster_members_histogram(self):
