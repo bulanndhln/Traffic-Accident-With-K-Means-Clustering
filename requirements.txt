@@ -1,8 +1,6 @@
 streamlit==1.24.1
 pandas>2.0
 numpy<=1.25.1
-sklearn.metrics
-sklearn.cluster
-sklearn.preprocessing
-io
-plotly.express
+sklearn ==1.3.2
+io == 3.9.18
+plotly == 5.9.0
