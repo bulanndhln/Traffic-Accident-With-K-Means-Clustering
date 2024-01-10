@@ -324,7 +324,7 @@ class ModelImplementation_dataset1:
             color_continuous_scale=colors
         )
 
-        figures.append(fig)
+
         fig.update_xaxes(showline=True, linewidth=2,
                          linecolor='Black', gridcolor='Grey')
         fig.update_yaxes(showline=True, linewidth=2,
