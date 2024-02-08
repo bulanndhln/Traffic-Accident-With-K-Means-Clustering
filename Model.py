@@ -19,29 +19,24 @@ class ModelImplementation_dataset1:
         if not isinstance(self.data, pd.DataFrame):
             raise ValueError("self.data harus berupa pandas DataFrame")
 
-        expected_columns = ['Jumlah Kecelakaan Scaled',
-                            'Jumlah Kendaraan Scaled', 'Jumlah Korban Scaled', 'Kerugian Material Scaled']
+        expected_columns = [
+            'Jumlah Kecelakaan', 'Jumlah Kendaraan', 'Jumlah Korban', 'Kerugian Material']
         missing_cols = [
             col for col in expected_columns if col not in self.normalized_data.columns]
         if missing_cols:
             raise ValueError(
                 f"Kolom berikut tidak ditemukan dalam normalized_data: {missing_cols}")
 
-        self.data_scaled_df = self.normalized_data[expected_columns]
-
+        # Gunakan nilai random_state yang tetap untuk reproduktibilitas
         self.kmeans = KMeans(n_clusters=n_cluster, init='k-means++',
-                             max_iter=300, n_init='auto', random_state=0)
-        self.kmeans.fit(self.data_scaled_df)
-        self.normalized_data['Cluster'] = self.kmeans.labels_
-        self.data['Cluster'] = self.kmeans.labels_
+                             max_iter=300, n_init='auto', random_state=42)
+        self.data_scaled_df = self.normalized_data.copy()
+        self.data_scaled_df['Cluster'] = self.kmeans.fit_predict(
+            self.normalized_data[expected_columns])
 
-        if not isinstance(self.data, pd.DataFrame) or self.data.shape[0] != self.normalized_data.shape[0]:
-            raise ValueError(
-                "self.data harus berupa pandas DataFrame dengan jumlah baris yang sama dengan self.normalized_data")
+        # Tambahkan kolom 'Cluster' ke DataFrame yang sudah ada
+        self.data['Cluster'] = self.data_scaled_df['Cluster']
 
-        self.data['Cluster'] = self.normalized_data['Cluster']
-        self.data = pd.DataFrame(self.data)
-        self.normalized_data = pd.DataFrame(self.normalized_data)
         return self.data
 
     def cluster_members(self):
@@ -49,16 +44,15 @@ class ModelImplementation_dataset1:
 
         for cluster_num in range(self.kmeans.n_clusters):
             # Mendapatkan anggota klaster
-            cluster_members = self.normalized_data[self.normalized_data['Cluster']
-                                                   == cluster_num]
+            cluster_members = self.data_scaled_df[self.data_scaled_df['Cluster'] == cluster_num]
 
             # Menyimpan jumlah anggota dan DataFrame anggota klaster
             member_count = len(cluster_members)
             members_df = pd.DataFrame(
-                {'Kesatuan': cluster_members['Kesatuan']})
+                {'': cluster_members['Kesatuan']})
 
             cluster_info.append(
-                (f"Anggota Klaster {cluster_num } : {member_count} Anggota", members_df))
+                (f"Anggota Klaster {cluster_num}: {member_count} Anggota", members_df))
 
         return cluster_info
 
@@ -95,12 +89,13 @@ class ModelImplementation_dataset1:
 
             min_max_values_list.append({
                 'cluster': cluster_num,
-                'min_values': {key: int(value) for key, value in min_values.to_dict().items()},
-                'max_values': {key: int(value) for key, value in max_values.to_dict().items()},
+                'min_values': min_values.to_dict(),
+                'max_values': max_values.to_dict(),
                 'kategori': kategori
             })
 
-
+        # Mengonversi list menjadi DataFrame
+        # self.min_max_values = pd.DataFrame(min_max_values_list)
         return min_max_values_list
 
     def cluster_members_histogram(self):
@@ -288,7 +283,7 @@ class ModelImplementation_dataset1:
 
         figures.append(fig)
 
-        # Plot 2: Clustering berdasarkan Jumlah Kecelakaan dan Jumlah Korban
+        # Plot 2: Clustering berdasarkan Jumlah Korban
         fig = px.scatter(
             self.data,
             x='Kesatuan',
@@ -314,7 +309,7 @@ class ModelImplementation_dataset1:
                           selector=dict(mode='markers'))
         figures.append(fig)
 
-        # Plot 4: Clustering berdasarkan Jumlah Kendaraan dan Jumlah Korban
+        # Plot 4: Clustering berdasarkan Jumlah Kendaraan
         fig = px.scatter(
             self.data,
             x='Kesatuan',
@@ -323,7 +318,6 @@ class ModelImplementation_dataset1:
             title='Klasterisasi Kecelakaan Berdasarkan Jumlah Kendaraan',
             color_continuous_scale=colors
         )
-
 
         fig.update_xaxes(showline=True, linewidth=2,
                          linecolor='Black', gridcolor='Grey')
@@ -342,6 +336,7 @@ class ModelImplementation_dataset1:
                           selector=dict(mode='markers'))
         figures.append(fig)
 
+        # Plot 1: Clustering berdasarkan Kerugian Material
         fig = px.scatter(
             self.data,
             x='Kesatuan',
@@ -445,15 +440,15 @@ class ModelImplementation_dataset2:
     def cluster_member_data2(self):
         cluster_info = []
         for cluster_num in range(self.n_clusters):
-            # Mendapatkan anggota klaster
             cluster_members = self.data[self.data['Cluster'] == cluster_num]
             # Menyimpan jumlah anggota dan DataFrame anggota klaster
             member_count = len(cluster_members)
-            members_df = pd.DataFrame(
-                {'Street': cluster_members['Street']})
+
+            # Pilih hanya kolom yang ingin Anda sertakan dalam output
+            members_df = pd.DataFrame({'Street': cluster_members['Street']})
 
             cluster_info.append(
-                (f"Anggota Klaster {cluster_num } : {member_count} Anggota", members_df))
+                (f"Anggota Klaster {cluster_num}: {member_count} Anggota", members_df))
 
         return cluster_info
 

@@ -3,28 +3,23 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 class Preprocessing_Dataset1:
-    def __init__(self):
+    def __init__(self, data):
+        self.data = data
         self.scaler = MinMaxScaler()
 
-    def normalized_dataset1(self, data):
-
-        # Menentukan kolom yang akan dinormalisasi
-        columns_to_normalize = [
+    def normalize_data(self):
+        # Inisialisasi MinMaxScaler
+        scaler = MinMaxScaler()
+        # Kolom untuk dinormalisasi
+        kolom_untuk_normalisasi = [
             'Jumlah Kecelakaan', 'Jumlah Kendaraan', 'Jumlah Korban', 'Kerugian Material']
 
-        # Melakukan normalisasi data
-        # Gunakan 'self.scaler' yang telah diinisialisasi
-        scaled_data = self.scaler.fit_transform(data[columns_to_normalize])
+        # Terapkan normalisasi pada kolom-kolom tertentu di aggregated_data_sorted
+        normalized_data = self.data.copy()
+        normalized_data[kolom_untuk_normalisasi] = scaler.fit_transform(
+            self.data[kolom_untuk_normalisasi])
 
-        # Membuat DataFrame dari data yang dinormalisasi
-        scaled_df = pd.DataFrame(scaled_data, columns=[
-            col + ' Scaled' for col in columns_to_normalize])
-        scaled_df['Kesatuan'] = data['Kesatuan']
-        scaled_df = scaled_df[['Kesatuan', 'Jumlah Kecelakaan Scaled',
-                               'Jumlah Kendaraan Scaled', 'Jumlah Korban Scaled', 'Kerugian Material Scaled']]
-
-        print(scaled_df)
-        return scaled_df
+        return normalized_data
 
 
 class Preprocessing_Dataset2:
@@ -41,6 +36,8 @@ class Preprocessing_Dataset2:
         self.data['Normalization'] = normalization_dataset2
 
         self.data = pd.DataFrame(self.data)
+        self.data.insert(0, 'No', range(1, len(self.data)+1))
 
+        self.data = pd.DataFrame(self.data)
+        self.data = self.data.set_index('No')
         return self.data
-

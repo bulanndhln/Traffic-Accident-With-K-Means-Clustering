@@ -31,4 +31,3 @@ class DBIEvaluator:
         data_subset = self.data[target_column].to_numpy().reshape(-1, 1)
         dbi_score = davies_bouldin_score(data_subset, labels)
         return dbi_score
-
