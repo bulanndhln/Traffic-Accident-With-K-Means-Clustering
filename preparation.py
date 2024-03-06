@@ -9,7 +9,7 @@ class Preparation_dataset1:
     def load_data(self):
         data1 = pd.read_excel(self.file_path, sheet_name=0)
         data2 = pd.read_excel(self.file_path, sheet_name=1)
-        data3 = pd.read_excel(self.file_path, sheet_name=4)
+        data3 = pd.read_excel(self.file_path, sheet_name=2)
 
         return data1, data2, data3
 

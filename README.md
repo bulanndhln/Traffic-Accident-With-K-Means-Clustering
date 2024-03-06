@@ -16,7 +16,7 @@ The dataset used is in xlsx format. For the dataset table as below:
 ![Tabel dataset jumlah kecelakaan lalu lintas](jumlah_laka.png)
 
 ### Sheet 2 : Kendaraan yang terlibat laka
-![Tabel dataset jumlah kendaraan yang terlibat](kendaraaan.png)
+![Tabel dataset jumlah kendaraan yang terlibat](kendaraan.png)
 
 ### Sheet 3 : Usia Korban
 ![Tabel dataset jumlah usia korban](usia.png)
